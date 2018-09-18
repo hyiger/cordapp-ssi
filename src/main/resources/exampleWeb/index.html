@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Example CorDapp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.2.0/ui-bootstrap-tpls.min.js"></script>
+    <script src="js/angular-module.js"></script>
+</head>
+
+<body ng-app="demoAppModule" ng-controller="DemoAppController as demoApp">
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">{{demoApp.thisNode}}</a>
+        </div>
+        <button ng-click="demoApp.openModal(true)" type="button" class="btn btn-primary navbar-btn" id="unilateral">
+            Create Settlement Instruction
+        </button>
+    </div>
+</nav>
+
+<script type="text/ng-template" id="unilateral.html">
+    <div class="modal-header">
+        <h4 class="modal-title">Add New Settlement Instruction</h4>
+    </div>
+    <form>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="method" class="control-label">Settlement Method:</label>
+                <select ng-init="modalInstance.form.method = modalInstance.form.method || options[0]"
+                        ng-model="modalInstance.form.method" class="form-control" id="method"
+                        ng-options="method as method for method in modalInstance.methods">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="beneficiaryName" class="control-label">Beneficiary Name:</label>
+                <input type="text" ng-model="modalInstance.form.beneficiary" class="form-control"
+                       id="beneficiaryName">
+            </div>
+            <div class="form-group">
+                <label for="code" class="control-label">Code:</label>
+                <input type="text" ng-model="modalInstance.form.code" class="form-control" id="code">
+            </div>
+            <div class="form-group">
+                <label for="institution" class="control-label">Institution:</label>
+                <input type="text" ng-model="modalInstance.form.institution" class="form-control" id="institution">
+            </div>
+            <div class="form-group">
+                <label for="additionalCode" class="control-label">Additional Code:</label>
+                <input type="text" ng-model="modalInstance.form.additionalCode" class="form-control"
+                       id="additionalCode">
+            </div>
+            <div class="form-group">
+                <label for="account" class="control-label">Account #:</label>
+                <input type="text" ng-model="modalInstance.form.account" class="form-control" id="account">
+            </div>
+            <div class="form-group">
+                <label for="routingNumber" class="control-label">Routing #:</label>
+                <input type="text" ng-model="modalInstance.form.routing" class="form-control" id="routingNumber">
+            </div>
+            <div class="form-group">
+                <label for="attention" class="control-label">Attention:</label>
+                <input type="text" ng-model="modalInstance.form.attention" class="form-control" id="attention">
+            </div>
+            <div class="form-group">
+                <label for="reference" class="control-label">Reference:</label>
+                <input type="text" ng-model="modalInstance.form.reference" class="form-control" id="reference">
+            </div>
+            <div ng-show="modalInstance.formError" class="form-group">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Enter valid Settlement instruction parameters
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button ng-click="modalInstance.cancel()" type="button" class="btn btn-default">Close</button>
+            <button ng-click="modalInstance.create()" type="button" class="btn btn-primary">Create Settlement
+                Instruction
+            </button>
+        </div>
+    </form>
+</script>
+
+
+<script type="text/ng-template" id="messageContent.html">
+    <div class="modal-body" id="modal-body">
+        {{ modalInstanceTwo.message }}
+    </div>
+</script>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="panel-group" id="accordion">
+            <div class="panel">
+                <div class="panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            Recorded Settlement Instructions:
+                        </h4>
+                    </div>
+                </div>
+                <div>
+                    <div ng-show="!demoApp.settlements.length" class="panel-body">Use the "Create Settlement
+                        Instruction" button to generate a settlement instruction
+                    </div>
+                    <div ng-repeat="settlement in demoApp.settlements" class="panel panel-default">
+                        <div class="panel-body">
+                            <ul>
+                                <li>Method: {{settlement.instruction.settlementMethod}}</li>
+                                <li>Beneficiary: {{settlement.instruction.beneficiaryName}}</li>
+                                <li>Code: {{settlement.instruction.code}}</li>
+                                <li>Institution: {{settlement.instruction.institution}}</li>
+                                <li>Additional Code: {{settlement.instruction.additionalCode}}</li>
+                                <li>Account #: {{settlement.instruction.account}}</li>
+                                <li>Routing #: {{settlement.instruction.routingNumber}}</li>
+                                <li>Attention: {{settlement.instruction.attention}}</li>
+                                <li>Reference: {{settlement.instruction.reference}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>
+
+</body>
+</html>
